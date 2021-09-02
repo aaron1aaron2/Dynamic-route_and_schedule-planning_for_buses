@@ -1,0 +1,25 @@
+# Folder
+/paper
+/output
+/venv
+
+# Data
+*.csv
+*.json
+*.xlsx
+
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Jupyter Notebook
+.ipynb_checkpoints
+
+# Tor
+*tor-win32-0.4.3.6
+
+# Other
+*.ini
+*.exe
+*.dll

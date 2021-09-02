@@ -1,0 +1,35 @@
+# data process tool
+pandas==1.1.5
+numpy==1.19.5
+
+# Visualization
+matplotlib==3.3.4
+seaborn==0.11.1
+ipywidgets==7.6.3
+plotly==4.14.3
+holoviews==1.14.3
+
+# map 
+folium==0.12.1
+
+# graph
+networkx==2.5.1
+
+# route planning
+ortools==8.2.8710
+
+# geo tool
+geopy==2.1.0
+
+# statistics
+scipy==1.5.4
+
+# crawler
+beautifulsoup4==4.9.3
+selenium==3.141.0
+stem==1.8.0
+PySocks==1.7.1
+webdriver-manager==3.4.1
+
+# environment
+virtualenv==20.4.2
