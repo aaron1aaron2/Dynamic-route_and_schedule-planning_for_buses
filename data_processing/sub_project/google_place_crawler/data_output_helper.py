@@ -1,3 +1,8 @@
+# encoding: utf-8
+"""
+@ author: yen-nan ho
+@ contact: aaron1aaron2@gmail.com
+"""
 # ================================================================================
 # (輸出何並檔 | main_re.pkl) & (附近景點 | place_ls_sub_spot.csv) & (附近景點全 | place_ls_sub_spot_all.csv)
 

@@ -1,6 +1,8 @@
-# -*- coding: utf-8 -*-
-__author__ = "yen-nan ho"
-
+# encoding: utf-8
+"""
+@ author: yen-nan ho
+@ contact: aaron1aaron2@gmail.com
+"""
 import re
 import os
 import time
