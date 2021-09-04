@@ -2,6 +2,7 @@
 /paper
 /output
 /venv
+/doc
 
 # Data
 *.csv
