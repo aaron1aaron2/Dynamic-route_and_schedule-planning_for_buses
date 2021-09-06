@@ -1,3 +1,5 @@
+wheel
+
 # data process tool
 pandas==1.1.5
 numpy==1.19.5
@@ -30,6 +32,3 @@ selenium==3.141.0
 stem==1.8.0
 PySocks==1.7.1
 webdriver-manager==3.4.1
-
-# environment
-virtualenv==20.4.2
