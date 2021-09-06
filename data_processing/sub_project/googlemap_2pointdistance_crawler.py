@@ -13,9 +13,6 @@ import numpy as np
 import csv
 from stem import Signal
 from stem.control import Controller
-# import socks
-# import socket
-# import requests
 from selenium import webdriver
 from webdriver_manager.chrome import ChromeDriverManager
 
