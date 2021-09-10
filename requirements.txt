@@ -17,7 +17,7 @@ folium==0.12.1
 # graph
 networkx==2.5.1
 
-# route planning
+# Optimization algorithm
 ortools==8.2.8710
 
 # geo tool
