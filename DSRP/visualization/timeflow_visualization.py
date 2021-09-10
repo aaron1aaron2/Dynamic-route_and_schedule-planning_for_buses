@@ -1,9 +1,10 @@
 # encoding: utf-8
 """
-@ author: yen-nan ho
-@ contact: aaron1aaron2@gmail.com
-@ date: 20210422
-@ describe: 使用 seaborn 套件，將各景點的 timeflow 中一到五的人流資訊視覺化呈現。
+Author: yen-nan ho
+Contact: aaron1aaron2@gmail.com
+GitHub: https://github.com/aaron1aaron2
+Create Date: 20210422
+Describe: 使用 seaborn 套件，將各景點的 timeflow 中一到五的人流資訊視覺化呈現。
 """
 # ==================================================================================================================
 # 資料分析 - 分布圖(timeflow)

@@ -1,9 +1,10 @@
 # encoding: utf-8
 """
-@ author: yen-nan ho
-@ contact: aaron1aaron2@gmail.com
-@ date: 20210428
-@ describe: 使用已經分攤人數的 peopleflow_timeflow 資料，繪製各景點各時段的人流甘特圖。
+Author: yen-nan ho
+Contact: aaron1aaron2@gmail.com
+GitHub: https://github.com/aaron1aaron2
+Create Date:  20210428
+Describe: 使用已經分攤人數的 peopleflow_timeflow 資料，繪製各景點各時段的人流甘特圖。
 """
 # ==================================================================================================================
 # 資料分析 - 甘特圖2(以人數基準) peopleflow_timeflow

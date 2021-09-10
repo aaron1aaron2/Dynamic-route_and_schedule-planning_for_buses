@@ -1,9 +1,10 @@
 # encoding: utf-8
 """
-@ author: yen-nan ho
-@ contact: aaron1aaron2@gmail.com
-@ date: 20210422
-@ describe: 使用 folium 套件，將景點列表中的點在地圖上標出來
+Author: yen-nan ho
+Contact: aaron1aaron2@gmail.com
+GitHub: https://github.com/aaron1aaron2
+Create Date: 20210422
+Describe: 使用 folium 套件，將景點列表中的點在地圖上標出來
 """
 # ==================================================================================================================
 # 資料分析 - 點示意地圖(map_point.csv -> map_main.html)
