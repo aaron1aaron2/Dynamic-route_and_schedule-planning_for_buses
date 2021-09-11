@@ -24,3 +24,4 @@ __pycache__/
 *.ini
 *.exe
 *.dll
+*.png
