@@ -1,7 +1,6 @@
 # Folder
 /paper
 /output
-/.venv
 /doc
 
 # Data
@@ -20,6 +19,10 @@ __pycache__/
 # Tor
 *tor-win32-0.4.3.6
 *tor_config
+
+# develop env
+/.venv
+/.vscode
 
 # Other
 *.ini
