@@ -19,6 +19,7 @@ __pycache__/
 
 # Tor
 *tor-win32-0.4.3.6
+*tor_config
 
 # Other
 *.ini
