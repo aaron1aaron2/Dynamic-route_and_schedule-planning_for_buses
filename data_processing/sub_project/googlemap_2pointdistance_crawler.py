@@ -1,29 +1,35 @@
 # coding: utf-8
-
-from bs4 import BeautifulSoup
-import time
-import pandas as pd
-from selenium import webdriver
-from selenium.webdriver.chrome.options import Options
-import math
 import re
 import os
-from multiprocessing import Pool
-import numpy as np
 import csv
+import stem
+import math
+import time
+import tqdm
+import pandas as pd
+
 from stem import Signal
 from stem.control import Controller
+
 from selenium import webdriver
+from selenium.webdriver.chrome.options import Options
+
+
+from multiprocessing import Pool
+from bs4 import BeautifulSoup
 from webdriver_manager.chrome import ChromeDriverManager
 
 ### Tor 切換IP與多開 -> https://hardliver.blogspot.com/2018/03/tor-tor-client.htmls
 
 class crawler:
-    def __init__(self, input_data, tor_path, tor_confs_path, core, chromedriver_path='chromedriver.exe'):
+    def __init__(self, input_data, tor_path, tor_confs_path, core, use_tor=True, chromedriver_path='chromedriver.exe'):
         self.core = core # 多開的數量
         self.use = input_data # 原始檔的檔案名稱
-        self.tor_path =  os.path.join(os.getcwd() ,tor_path)
-        self.tor_confs_path =  os.path.join(os.getcwd() ,tor_confs_path)
+        self.use_tor = use_tor
+        if use_tor:
+            self.tor_path =  os.path.join(os.getcwd() ,tor_path)
+            self.tor_confs_path =  os.path.join(os.getcwd() ,tor_confs_path)
+
         self.chromedriver = chromedriver_path
         self.output_path = input_data.replace('.csv', '_result.csv').replace('1_','2_')
 
@@ -36,6 +42,7 @@ class crawler:
 
         for i in range(1, self.core+1):
             torrc_file_path = os.path.join(self.tor_confs_path, 'torrc{}.in'.format(i))
+            # print('torrc_config:', torrc_file_path, self.tor_path)
 
             if not os.path.exists(self.tor_confs_path):
                 os.mkdir(self.tor_confs_path)
@@ -74,8 +81,9 @@ class crawler:
         print('check output file')
 
         if os.path.exists(self.output_path):
-            df_check = pd.read_csv(self.output_path, header=None)
-            df1 = df1[~df1['route'].isin(df_check[0])]
+            if os.stat(self.output_path).st_size != 0:
+                df_check = pd.read_csv(self.output_path, header=None)
+                df1 = df1[~df1['route'].isin(df_check[0])]
 
         print('leftover->{}'.format(df1.shape[0]))
 
@@ -123,57 +131,56 @@ class crawler:
 
         '''計算兩地點之間(路線)的距離與時間'''
         df, proxy = arg_ls
-        t = []
-        m = []
-        name = []
 
         browser = self.chrome(proxy)
+        browser.implicitly_wait(5)
 
-        for v, i in enumerate(df):
-            name.append(i)
+        for v, name in tqdm.tqdm(enumerate(df)):
             minute = []
             count = 0
-            browser.get('https://www.google.com.tw/maps/dir/' + str(i) + '/data=!3m1!4b1!4m2!4m1!3e0') #最後一碼為0汽車、2走路
-
-            time.sleep(1)
+            browser.get('https://www.google.com.tw/maps/dir/' + str(name) + '/data=!3m1!4b1!4m2!4m1!3e0') #最後一碼為0汽車、2走路
 
             # 最多執行50次，沒有的話則輸出nan，並切換IP
             while not minute:
+                browser.implicitly_wait(5)
                 time.sleep(0.5)
                 count += 1
-                if count == 50:
-                    m.append(np.nan)
-                    t.append(np.nan)
-
-                    with Controller.from_port(port=int(proxy[-4:]) + 1) as controller:
-                        controller.authenticate()
-                        controller.signal(Signal.NEWNYM)
+                if count == 10:
+                    try:
+                        with Controller.from_port(port=int(proxy[-4:]) + 1) as controller:
+                            controller.authenticate()
+                            controller.signal(Signal.NEWNYM)
+                    except stem.SocketError as exc:
+                        print("Unable to connect to tor on port 9051: %s" % exc)
 
                     browser.close()
                     browser = self.chrome(proxy)
+                    browser.get('https://www.google.com.tw/maps/dir/' + str(name) + '/data=!3m1!4b1!4m2!4m1!3e0') #最後一碼為0汽車、2走路
 
+                if count == 20:
+                    print(f'[Error] {name} not available')
                     break
-
+                _ = browser.find_element_by_xpath('//*[@id="section-directions-trip-travel-mode-0"]') #等到找到這個在往下
                 soup = BeautifulSoup(browser.page_source, "html.parser")
-                minute = soup.find_all("div", class_ = "section-directions-trip-numbers")
-                for c, k in enumerate(minute):
-                    t.append("".join(re.findall(r'\d+\D{,5}',
-                                                k.find("div", class_="section-directions-trip-duration").text)).rstrip(" ").replace("\xa0", " ").split(" "))
-                    m.append("".join(re.findall(r'\d+\D{,3}',
-                                                k.find("div", class_="section-directions-trip-distance").text.strip(" ").replace(",", "."))).replace("\xa0", " ").split(" "))
-
-                    if c == 0:
-                        break
-
-            combine = [name[-1], t[-1], m[-1]]
+                minute = soup.find_all("div", class_ = re.compile(".+trip.+"))
+                minute = [(i.text, re.findall(r'\d+\D{,3}', i.text)) for i in minute if (len(i.text)<40) & (i.text.strip()!='')]
+                minute = [[text, 'distance', select_ls] if (text.find('公里') !=-1 | text.find('公尺')) else (
+                            [text, 'trip duration', select_ls] if (text.find('預估行車時間') != -1) else (
+                            [text, 'trip duration(Smooth)', select_ls] if (text.find('交通順暢') != -1) else
+                            [text, 'unknow', select_ls]
+                            )) for text, select_ls in minute if len(select_ls)!=0]
 
             # 將每筆資料同步輸出
-            with open(self.output_path, 'a', newline='', encoding='utf-8') as csvfile:
-                time.sleep(0.5)
-                writer = csv.writer(csvfile)
-                writer.writerow(combine)
+            if len(minute) != 0:
+                with open(self.output_path, 'a', newline='', encoding='utf-8') as csvfile:
+                    time.sleep(0.5)
+                    writer = csv.writer(csvfile)
+                    for i in minute:
+                        combine = [name] + i
+                        writer.writerow(combine)
 
-            print(v, i)
+            # if v%50 == 0:
+            #     print(f'[{v}/{df.shape[0]}]')
 
         # 關閉瀏覽器
         browser.close()
@@ -206,6 +213,9 @@ class crawler:
             if debug==True:
                 test = arg_list[0]
                 self.route(test)
+            elif self.core ==1:
+                for i in arg_list:
+                    self.route(i)
             else:
                 self.pool_handler(arg_list)
 
