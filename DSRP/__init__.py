@@ -24,3 +24,10 @@ if not os.path.exists(DATA_DIR):
 from . import path_planing
 from . import visualization
 from . import utils
+
+from .data import load_data
+from . import flow_apportion
+from . import utils
+
+def get_flow_apportion(**kwargs):
+    return flow_apportion.main(**kwargs)
