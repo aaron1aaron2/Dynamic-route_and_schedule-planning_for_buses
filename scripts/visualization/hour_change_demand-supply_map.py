@@ -10,5 +10,9 @@ lat_long_split = hour_change_coor['coordinate'].str.extract('(?P<lat>.+),(?P<lon
 hour_change_coor =hour_change_coor.join(lat_long_split)
 
 hour_change_coor['PM'] = hour_change_coor['value_variation'].apply(lambda x: 'Plus' if x>0 else 'Minus' if x<0 else 'Zero')
+hour_change_coor['value_variation_abs'] = hour_change_coor['value_variation'].abs()
+hour_change_coor['value_variation_abs(zscore)'] = (hour_change_coor['value_variation_abs'] - 
+    hour_change_coor['value_variation_abs'].mean())/hour_change_coor['value_variation_abs'].std()
+
 
 hour_change_coor.to_csv('output/report/hour_change_coor_map.csv', index=False)
