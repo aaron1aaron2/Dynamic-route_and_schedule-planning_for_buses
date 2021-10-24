@@ -5,7 +5,7 @@ mkdir ~/envs # 儲存環境地方(~代表使用者資料夾底下)
 cd ~/envs
 virtualenv -p python3 DSRP
 
-cd <YOUR PROJECT FOLDER>
+cd <YOUR PROJECT FOLDER> # 回到專案資料夾
 source ~/envs/DSRP/bin/activate # 之後要使用時只要跑這行就可進入環境
 
 pip install -r requirements.txt
