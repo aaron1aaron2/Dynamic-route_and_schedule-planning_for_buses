@@ -1,9 +1,17 @@
 import pandas as pd
 
-def main(df):
-    df.drop(['result_name'], axis=1, inplace=True)
+def main(df, group_col, time_cols):
+    # 1-0.3.3_peopleflow_timeflow_spots_melt.csv 多這一段>>>>>>>>>>>>>>>>>>>
+    df = df[group_col+time_cols]
 
-    # 計算每個點各個時段的人流變化
+    df = pd.melt(df,
+            id_vars = ['遊憩據點', 'week', 'year', 'month'],
+            value_vars = [str(i)+'時' for i in range(24)],
+            var_name = 'time_flow', 
+            value_name = 'time_flow_value'
+            )
+    # 1-0.3.3_peopleflow_timeflow_spots_melt.csv 多這一段<<<<<<<<<<<<<<<<<<<<<<
+    
     gb = df.groupby(['遊憩據點', 'year', 'month', 'week'])
     gb_ls = list(gb.indices.keys())
 
@@ -29,5 +37,3 @@ def main(df):
         result = result.append(time_value_df)
     
     return result
-
-    result.to_csv(os.path.join(output_folder, '1-2.2.1_peopleflow_variation.csv'), index=False)

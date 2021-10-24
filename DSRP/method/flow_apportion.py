@@ -10,7 +10,6 @@ import pandas as pd
 from collections import Counter
 from calendar import weekday, monthrange
 
-from IPython import embed
 def get_days_of_the_week_by_yearmonth(touristflow_df, year_col, month_col):
     '''獲取流量資料中各年月對應的星期數量'''
     ym_df = touristflow_df[[year_col, month_col]].drop_duplicates()
