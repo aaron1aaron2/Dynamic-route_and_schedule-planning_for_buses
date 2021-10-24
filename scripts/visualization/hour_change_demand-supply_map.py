@@ -16,3 +16,4 @@ hour_change_coor['value_variation_abs(zscore)'] = (hour_change_coor['value_varia
 
 
 hour_change_coor.to_csv('output/report/hour_change_coor_map.csv', index=False)
+# 此資料後續由 powerBI ，可繪製花東各景點一段時間的供需地圖
