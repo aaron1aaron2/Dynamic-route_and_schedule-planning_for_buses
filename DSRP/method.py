@@ -3,13 +3,14 @@
 Author: yen-nan ho
 Contact: aaron1aaron2@gmail.com
 GitHub: https://github.com/aaron1aaron2
-Create Date:  20210907
+Create Date:  20211029
 """
 import functools
 import pandas as pd
 from collections import Counter
 from calendar import weekday, monthrange
 
+# flow apportion >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> 
 def get_days_of_the_week_by_yearmonth(touristflow_df, year_col, month_col):
     '''獲取流量資料中各年月對應的星期數量'''
     ym_df = touristflow_df[[year_col, month_col]].drop_duplicates()
@@ -65,7 +66,7 @@ def share_the_peopleflow(main_ls, timeflow, yearmonth):
 
     return result_dt
 
-def main(touristflow_df, populartime_dt):
+def get_flow_apportion(touristflow_df, populartime_dt):
     populartime_dt = {k:v for k,v in populartime_dt.items() if k[0] in touristflow_df['遊憩據點'].unique()}
     
     spots_in_populartime = set([i[0] for i in populartime_dt.keys()])
@@ -85,5 +86,53 @@ def main(touristflow_df, populartime_dt):
 
     result_all = result_all.reset_index().rename(columns={'level_0':'遊憩據點', 'level_1':'week'})
 
-    return result_all
-    # result_all.to_csv(os.path.join(output_folder, '3.3_peopleflow_timeflow_spots.csv'), index=False)
+    return result_all   # result_all.to_csv(os.path.join(output_folder, '3.3_peopleflow_timeflow_spots.csv'), index=False)
+# <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+# calculate_hour_change >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> 
+def calculate_hour_change(df, group_col, time_cols):
+    # 1-0.3.3_peopleflow_timeflow_spots_melt.csv 多這一段>>>>>>>>>>>>>>>>>>>
+    df = df[group_col+time_cols]
+
+    df = pd.melt(df,
+            id_vars = ['遊憩據點', 'week', 'year', 'month'],
+            value_vars = [str(i)+'時' for i in range(24)],
+            var_name = 'time_flow', 
+            value_name = 'time_flow_value'
+            )
+    # 1-0.3.3_peopleflow_timeflow_spots_melt.csv 多這一段<<<<<<<<<<<<<<<<<<<<<<
+    
+    gb = df.groupby(['遊憩據點', 'year', 'month', 'week'])
+    gb_ls = list(gb.indices.keys())
+
+    result = pd.DataFrame()
+    for gp in gb_ls:
+        tmp = gb.get_group(gp)
+        tmp['time'] = tmp.time_flow.str.extract('(\d+)').astype(int)
+        tmp.sort_values(['time'], inplace=True)
+
+        time_value = tmp[['time_flow', 'time_flow_value']].values
+
+        time_value_df = pd.concat([
+            pd.DataFrame(time_value[:-1], columns=['start_time', 'start_value']),
+            pd.DataFrame(time_value[1:], columns=['end_time', 'end_value'])
+            ], axis=1)
+
+        time_value_df['value_variation'] = time_value_df['end_value'] - time_value_df['start_value']
+
+        time_value_df.drop(['start_value', 'end_value'], axis=1, inplace=True)
+
+        time_value_df = pd.concat([tmp.iloc[:time_value_df.shape[0], :4].reset_index(drop=True), time_value_df], axis=1)
+
+        result = result.append(time_value_df)
+    
+    return result
+# <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+# calculate_flow_between_spot >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+def calculate_flow_between_spot():
+
+    return 
+# <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
