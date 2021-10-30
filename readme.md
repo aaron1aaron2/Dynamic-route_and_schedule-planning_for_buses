@@ -22,13 +22,6 @@ root
 
  |-- doc
  |-- DSRP
-        |-- path_planing
-        |-- visualization
-        |- __init__.py
-        |- date.py
-        |- flow_apportion.py
-        |- utils.py
-
  |-- img
  |-- output
  |-- scripts
