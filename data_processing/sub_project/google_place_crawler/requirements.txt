@@ -7,4 +7,4 @@ flask==1.1.2
 python_telegram_bot==12.7
 pyngrok==2.1.7
 openpyxl==3.0.7
-lxml==4.6.
+lxml==4.6.5
