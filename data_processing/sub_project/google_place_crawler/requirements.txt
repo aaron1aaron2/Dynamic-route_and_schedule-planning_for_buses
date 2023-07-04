@@ -1,7 +1,7 @@
 scipy==1.4.1
 pandas==1.0.3
 scikit-learn==0.22.2
-requests==2.23.0
+requests==2.31.0
 telegram==0.0.1
 flask==2.2.5
 python_telegram_bot==12.7
